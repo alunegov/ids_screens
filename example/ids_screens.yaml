@@ -1,0 +1,27 @@
+ids:
+  path: C:/Work/IDS-l10n/.out/Debug/IDS.exe
+  tree_path:
+    obj: &obj_path [0, Подшипники Демо, Внешняя обойма]
+    msr: &msr_path [0, Подшипники Демо, Внешняя обойма, 0, 0]
+  systems:
+    - type: rb  # Подшипники качения
+      key: C:/Work/IDS-l10n/.out/Debug/Opts_IDS Подшипники качения_ДЕМО_440_нет.gkd
+      suffix: _SVK
+      import_file: D:/Pub/__IDS master image/IDS/Предприятие Подшипники Демо 01.03.2010.rar
+      tree_path:
+        obj: *obj_path
+        msr: *msr_path
+      view_marka_paths:
+        - [0, Подшипник качения]
+    - type: kd  # Камертон-Д
+      key: C:/Work/IDS-l10n/.out/Debug/Opts_IDS Камертон-Д_ДЕМО_нет_нет.gkd
+      suffix: _KD
+      import_file: D:/Pub/__IDS master image/IDS/Предприятие Камертон-Д Демо 13.05.2009.rar
+      tree_path:
+        obj: *obj_path
+        msr: *msr_path
+      view_marka_paths:
+        - [0, Подшипник качения]
+
+rr_viewer:
+  path: C:/Serv/ROSRRViewer.exe
