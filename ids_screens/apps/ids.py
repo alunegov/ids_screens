@@ -515,8 +515,7 @@ class RB(ExpertSystem):
     def DBEditor_Markas(self):
         self.ids.menu_select("#1->#0")  # Сервис->Редактор БД
         # не находит по TDBEditForm, используем top_window()
-        self.app.top_window().move_window(100, 100, 400, 300)
-        self.app.wait_cpu_usage_lower()
+        self.app.top_window().move_window(width=400, height=300)  # сбрасываем к минимальным размерам
         self.app.top_window().capture_as_image().save("DBEditor_Markas{}.bmp".format(self.suffix))
         self.app.top_window().close_alt_f4()
 
