@@ -24,8 +24,9 @@ def main():
     bg = Application(backend="win32").start("notepad.exe")
     bg.Notepad.maximize()
 
-    shoot_ids(conf["ids"])
-    shoot_rr_viewer(conf["rr_viewer"])
-
-    bg.Notepad.close()
-    win32api.SetCursorPos(start_mouse_pos)
+    try:
+        shoot_ids(conf["ids"])
+        shoot_rr_viewer(conf["rr_viewer"])
+    finally:
+        bg.Notepad.close()
+        win32api.SetCursorPos(start_mouse_pos)
