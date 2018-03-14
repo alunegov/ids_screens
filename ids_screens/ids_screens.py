@@ -1,3 +1,4 @@
+from pathlib import Path
 import win32api
 
 from pywinauto import Application
@@ -10,6 +11,10 @@ from ._pywinauto.patcher import patch as pywinauto_patch
 
 def main():
     pywinauto_patch()
+
+    # удаляем старые файлы (все bmp-файлы в текущей папке)
+    for p in Path(".").glob("*.bmp"):
+        p.unlink()
 
     with open("ids_screens.yaml", encoding="UTF-8") as f:
         conf = yaml.safe_load(f)
