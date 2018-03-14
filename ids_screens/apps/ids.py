@@ -227,10 +227,10 @@ class IDS:
         # self.app.TParamsForm.close_alt_f4()
 
     def Params_SignalsShow(self):
-        # TODO: дефолтные параметры
         self.ids.menu_select("#1->#{}->#1".format(self.params_index))  # Сервис->Параметры->Просмотр сигналов
+        self.app.TGrafSetups_Params_Form.Button9.click()  # По умолчанию (дефолтные параметры)
         self.app.TGrafSetups_Params_Form.capture_as_image().save("Params_SignalsShow.bmp")
-        SendKeys("{TAB}{TAB}{TAB}{TAB}{RIGHT}")  # переключаемся на закладку Параметры 2
+        SendKeys("{TAB}{TAB}{RIGHT}")  # переключаемся на закладку Параметры 2 с кнопки По умолчанию
         self.app.TGrafSetups_Params_Form.capture_as_image().save("Params_SignalsShow_p2.bmp")
         self.app.TGrafSetups_Params_Form.close_alt_f4()
 
