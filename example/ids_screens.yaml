@@ -1,27 +1,66 @@
 ids:
   path: C:/Work/IDS-l10n/.out/Debug/IDS.exe
+
   tree_path:
     obj: &obj_path [0, Подшипники Демо, Внешняя обойма]
     msr: &msr_path [0, Подшипники Демо, Внешняя обойма, 0, 0]
+
   systems:
     - type: rb  # Подшипники качения
-      key: C:/Work/IDS-l10n/.out/Debug/Opts_IDS Подшипники качения_ДЕМО_440_нет.gkd
+      key: D:/tmp/__softkeys/Opts_IDS Подшипники качения_ДЕМО_440_нет.gkd
       suffix: _SVK
-      import_file: D:/Pub/__IDS master image/IDS/Предприятие Подшипники Демо 01.03.2010.rar
+      import_file: D:\Pub\__IDS master image\IDS\Предприятие Подшипники Демо 01.03.2010.rar
       tree_path:
         obj: *obj_path
         msr: *msr_path
       view_marka_paths:
         - [0, Подшипник качения]
+
     - type: kd  # Камертон-Д
-      key: C:/Work/IDS-l10n/.out/Debug/Opts_IDS Камертон-Д_ДЕМО_нет_нет.gkd
-      suffix: _KD
-      import_file: D:/Pub/__IDS master image/IDS/Предприятие Камертон-Д Демо 13.05.2009.rar
+      key: D:/tmp/__softkeys/Opts_IDS Камертон-Д_ДЕМО_нет_нет.gkd
+      suffix: _KamD
+      import_file: D:\Pub\__IDS master image\IDS\Предприятие Камертон-Д Демо 13.05.2009.rar
       tree_path:
         obj: *obj_path
         msr: *msr_path
       view_marka_paths:
         - [0, Подшипник качения]
+
+    - type: kd_wKam  # Камертон-Д с Камертоном
+      key: D:/tmp/__softkeys/Opts_IDS Камертон-Д_ДЕМО_440_нет.gkd
+      suffix: _KamD_wKam
+
+    - type: skd  # СК-Диагностика
+      key: D:/tmp/__softkeys/Opts_IDS СК-Диагностика_ДЕМО_нет_нет.gkd
+      suffix: _SKD
+
+    - type: skd_wKam  # СК-Диагностика с Камертоном
+      key: D:/tmp/__softkeys/Opts_IDS СК-Диагностика_ДЕМО_440_нет.gkd
+      suffix: _SKD_wKam
+
+    - type: tvs  # TransVS
+      key: D:/tmp/__softkeys/Opts_IDS TransVS_ДЕМО_нет_нет.gkd
+      suffix: _Vesta
+
+    - type: tvs_wKam  # TransVS с Камертоном
+      key: D:/tmp/__softkeys/Opts_IDS TransVS_ДЕМО_440_нет.gkd
+      suffix: _Vesta_wKam
+
+    - type: stg  # Статор ТГ
+      key: D:/tmp/__softkeys/Opts_IDS Статор ТГ_ДЕМО_440_нет.gkd
+      suffix: _STG
+
+    - type: rf  # РФ
+      key: D:/tmp/__softkeys/Opts_IDS РФ_ДЕМО_нет_нет.gkd
+      suffix: _GTD
+
+    - type: ff  # Свободный формат
+      key: D:/tmp/__softkeys/Opts_IDS Свободный формат_нет_нет.gkd
+      suffix: _FF
+
+    - type: ff_wKam  # Свободный формат с Камертоном
+      key: D:/tmp/__softkeys/Opts_IDS Свободный формат_440_РОС.gkd
+      suffix: _FF_wKam
 
 rr_viewer:
   path: C:/Serv/ROSRRViewer.exe

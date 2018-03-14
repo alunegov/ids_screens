@@ -46,6 +46,7 @@ class IDS:
             self.MainWindow_MainMenu("_Common")
         self.MainWindow_NewObject_Call()
         self.MainWindow_NewObject()
+        self.MainWindow_NewZamer_Call()
         self.MainWindow_PSP_Call()
         self.PSP()
         self.Zamer_Show_Call()
@@ -184,6 +185,47 @@ class IDS:
         self.app.TImportSettingsForm.capture_as_image().save("Import_Params_Extra.bmp")
         SendKeys("{ESC}{ESC}")  # закрываем меню
 
+    def Params(self, first: str, pages=None):
+        # Params_Common{}.bmp
+        # Params_Common2{}.bmp
+        # Params_RB{}.bmp
+        # Params_UserPointNames{}.bmp
+        # TODO: дефолтные параметры
+        # TODO: у TransVS, StatorTG, RF и FreeFormat параметр Использовать стандартные обозначения точек... выключен
+        # по умолчанию
+        self.ids.menu_select("#1->#{}->#0".format(self.params_index))  # Сервис->Параметры->Общие
+        self.app.TParamsForm.capture_as_image().save("{}.bmp".format(first))
+        if pages is not None and isinstance(pages, list) and len(pages) > 0:
+            SendKeys("{TAB}{TAB}")  # подготавливаемся к переключению закладок
+            for p in pages:
+                SendKeys("{RIGHT}")  # переключаемся на следующую закладку
+                time.sleep(self.delay_win_active)
+                self.app.TParamsForm.capture_as_image().save("{}.bmp".format(p))
+        self.app.TParamsForm.close_alt_f4()
+
+    def Params_RB_ExtraVibroLevels(self):
+        self.ids.menu_select("#1->#{}->#0".format(self.params_index))  # Сервис->Параметры->Общие
+        SendKeys("{TAB}{TAB}{RIGHT}{RIGHT}")  # переключаемся на закладку Подшипники
+        self.app.TParamsForm["...TBitBtn"].click()
+        time.sleep(self.delay_win_active)
+        # TODO: дефолтные параметры
+        self.app.TParams_RB_PowerInBandsForm.capture_as_image().save("Params_RB_ExtraVibroLevels.bmp")
+        self.app.TParams_RB_PowerInBandsForm.close_alt_f4()
+        self.app.TParamsForm.close_alt_f4()
+
+    @staticmethod
+    def Params_UserPointNames_Edit(suffix: str):
+        print("skip Params_UserPointNames{}_Edit.bmp".format(suffix))
+        # self.ids.menu_select("#1->#{}->#0".format(self.params_index))  # Сервис->Параметры->Общие
+        # # даже если закладок всего 3, то лишние {RIGHT} не "зациклят" переключение, а "остановятся" на последней
+        # SendKeys("{TAB}{TAB}{RIGHT}{RIGHT}{RIGHT}")  # переключаемся на закладку Формирование измерения
+        # # TODO: self.app.TParamsForm["---TSpeedButton"].click()
+        # time.sleep(self.delay_win_active)
+        # # TODO: дефолтные параметры
+        # self.app.TParams_ZamerFormirov_PointsNameAlly_Form.capture_as_image().save("Params_UserPointNames{}_Edit.bmp".format(suffix))
+        # self.app.TParams_ZamerFormirov_PointsNameAlly_Form.close_alt_f4()
+        # self.app.TParamsForm.close_alt_f4()
+
     def Params_SignalsShow(self):
         # TODO: дефолтные параметры
         self.ids.menu_select("#1->#{}->#1".format(self.params_index))  # Сервис->Параметры->Просмотр сигналов
@@ -242,7 +284,7 @@ class ExpertSystem(IDS):
         self.key_origin = str(Path(self.path).with_name(self.KEY_NAME))
         self.key_bak = self.key_origin + ".bak"
         self.suffix = conf["suffix"]
-        self.import_file = conf["import_file"]
+        self.import_file = conf.get("import_file", None)
 
     def start_app(self):
         if self.key is not None and self.key != "":
@@ -262,9 +304,53 @@ class ExpertSystem(IDS):
         shutil.copy2(self.key_bak, self.key_origin)
 
 
-class KD(ExpertSystem):
+class WithKamerton(ExpertSystem):
     def shoot(self):
         pass
+
+
+class KamertonD(ExpertSystem):
+    def shoot(self):
+        self.Params("Params_Common", ["Params_Common2", "Params_RB_KamD", "Params_UserPointNames_KamD"])
+        self.Params_RB_ExtraVibroLevels()
+
+
+class KamertonDwKam(WithKamerton):
+    def shoot(self):
+        super().shoot()
+        # отличие только на первой закладке
+        self.Params("Params_Common_KamD")
+        self.Params_RB_ExtraVibroLevels()
+
+
+class SKDiag(ExpertSystem):
+    def shoot(self):
+        self.Params("Params_Common", ["Params_Common2", "Params_RB_KamD", "Params_UserPointNames_SKD"])
+        self.Params_RB_ExtraVibroLevels()
+
+
+class SKDiagwKam(WithKamerton):
+    def shoot(self):
+        # отличие только на первой закладке
+        self.Params("Params_Common_KamD")
+        self.Params_RB_ExtraVibroLevels()
+
+
+class TransVS(ExpertSystem):
+    def shoot(self):
+        self.Params("Params_Common_Vesta_woKam", ["Params_Common2_Vesta", "Params_UserPointNames_Vesta"])
+        self.Params_UserPointNames_Edit(self.suffix)
+
+
+class TransVSwKam(WithKamerton):
+    def shoot(self):
+        super().shoot()
+        # отличие только на первой закладке
+        self.Params("Params_Common_Vesta_wKam")
+
+
+class TransVSwWIS(ExpertSystem):
+    pass
 
 
 class RB(ExpertSystem):
@@ -289,7 +375,7 @@ class RB(ExpertSystem):
         self.Zamer_Extra_SVK_CommonDiag()
         self.Import_Manual()
         self.DBEditor_Markas()
-        self.Params()
+        self.Params("Params_Common_SVK", ["Params_Common2_SVK", "Params_RB_SVK"])
         self.Params_RB_ExtraVibroLevels()
 
     def psp_change_marka(self):
@@ -394,7 +480,8 @@ class RB(ExpertSystem):
         self.ids.TreeView.get_item(self.rbmsr_tree_path).click_input(button="right")
         # Подшипники качения->Фактический зазор
         if self.app.PopupMenu.menu().item_count() > 21:
-            self.app.PopupMenu.wrapper_object().highlight_and_capture("#21->#2", "EDIT_SF_RB_Call.bmp", self.screen_rect)
+            self.app.PopupMenu.wrapper_object().highlight_and_capture("#21->#2", "EDIT_SF_RB_Call.bmp",
+                                                                      self.screen_rect)
             SendKeys("{ESC}{ESC}")  # закрываем меню
         else:
             print("skip SF_RB_Call.bmp")
@@ -417,6 +504,7 @@ class RB(ExpertSystem):
         if self.app.DialogEdit.exists() or self.app.Dialog.exists():
             # ошибка открытия файла (иногда окно предупреждения не появляется)
             print("skip Import_Manual{}.bmp".format(self.suffix))
+            time.sleep(3)  # чтобы успеть увидеть сообщение ))
             SendKeys("{ESC}{ESC}{ESC}")  # закрываем все окна вплоть до IDS
         else:
             self.app.TImportInitForm.Button3.click()  # Ok
@@ -429,37 +517,35 @@ class RB(ExpertSystem):
         self.ids.menu_select("#1->#0")  # Сервис->Редактор БД
         # не находит по TDBEditForm, используем top_window()
         self.app.top_window().move_window(100, 100, 400, 300)
+        self.app.wait_cpu_usage_lower()
         self.app.top_window().capture_as_image().save("DBEditor_Markas{}.bmp".format(self.suffix))
         self.app.top_window().close_alt_f4()
 
-    def Params(self):
-        # Params_Common{}.bmp
-        # Params_Common2{}.bmp
-        # Params_RB{}.bmp
-        # Params_UserPointNames{}.bmp
-        # TODO: дефолтные параметры
-        self.ids.menu_select("#1->#{}->#0".format(self.params_index))  # Сервис->Параметры->Общие
-        self.app.TParamsForm.capture_as_image().save("Params_Common{}.bmp".format(self.suffix))
-        SendKeys("{TAB}{TAB}{RIGHT}")  # переключаемся на закладку Общие2
-        self.app.TParamsForm.capture_as_image().save("Params_Common2{}.bmp".format(self.suffix))
-        # TODO: третьей закладки м. не быть, также это м.б. Формирование измерения
-        SendKeys("{RIGHT}")  # переключаемся на закладку Подшипники
-        self.app.TParamsForm.capture_as_image().save("Params_RB{}.bmp".format(self.suffix))
-        # TODO: закладки Формирование измерения м. не быть
-        SendKeys("{RIGHT}")  # переключаемся на закладку Формирование измерения
-        time.sleep(self.delay_win_active)
-        self.app.TParamsForm.capture_as_image().save("Params_UserPointNames{}.bmp".format(self.suffix))
-        self.app.TParamsForm.close_alt_f4()
 
-    def Params_RB_ExtraVibroLevels(self):
-        self.ids.menu_select("#1->#{}->#0".format(self.params_index))  # Сервис->Параметры->Общие
-        SendKeys("{TAB}{TAB}{RIGHT}{RIGHT}")  # переключаемся на закладку Подшипники
-        self.app.TParamsForm["...TBitBtn"].click()
-        time.sleep(self.delay_win_active)
-        # TODO: дефолтные параметры
-        self.app.TParams_RB_PowerInBandsForm.capture_as_image().save("Params_RB_ExtraVibroLevels.bmp")
-        self.app.TParams_RB_PowerInBandsForm.close_alt_f4()
-        self.app.TParamsForm.close_alt_f4()
+class StatorTGwKam(WithKamerton):
+    def shoot(self):
+        self.Params("Params_Common_Vesta_wKam", ["Params_Common2_Vesta", "Params_UserPointNames_STG"])
+        self.Params_UserPointNames_Edit(self.suffix)
+
+
+class RF(ExpertSystem):
+    def shoot(self):
+        self.Params("Params_Common", ["Params_Common2", "Params_RB_KamD", "Params_UserPointNames_GTD"])
+        self.Params_RB_ExtraVibroLevels()
+        self.Params_UserPointNames_Edit(self.suffix)
+
+
+class FreeFormat(ExpertSystem):
+    def shoot(self):
+        self.Params("Params_Common_Vesta_woKam", ["Params_Common2_FF", "Params_UserPointNames_FF"])
+        self.Params_UserPointNames_Edit(self.suffix)
+
+
+class FreeFormatwKam(WithKamerton):
+    def shoot(self):
+        super().shoot()
+        # отличие только на первой закладке
+        self.Params("Params_Common_Vesta_wKam")
 
 
 def shoot_ids(conf):
@@ -467,18 +553,32 @@ def shoot_ids(conf):
     obj_tree_path = conf["tree_path"]["obj"]
     msr_tree_path = conf["tree_path"]["msr"]
 
+    systems = {
+        "kd": KamertonD,
+        "kd_wKam": KamertonDwKam,
+        "skd": SKDiag,
+        "skd_wKam": SKDiagwKam,
+        "tvs": TransVS,
+        "tvs_wKam": TransVSwKam,
+        "rb": RB,
+        "stg": StatorTGwKam,
+        "rf": RF,
+        "ff": FreeFormat,
+        "ff_wKam": FreeFormatwKam
+    }
+
     for i, s in enumerate(conf["systems"]):
-        if s["type"] == "kd":
-            o = KD(path, obj_tree_path, msr_tree_path, s)
-        elif s["type"] == "rb":
-            o = RB(path, obj_tree_path, msr_tree_path, s)
+        klass = systems.get(s["type"], None)
+        if klass is not None:
+            obj = klass(path, obj_tree_path, msr_tree_path, s)
         else:
+            print("skip system with type {}".format(s["type"]))
             continue
 
         try:
-            o.start_app()
+            obj.start_app()
             if i == 0:
-                o.shoot_common()
-            o.shoot()
+                obj.shoot_common()
+            obj.shoot()
         finally:
-            o.stop_app()
+            obj.stop_app()

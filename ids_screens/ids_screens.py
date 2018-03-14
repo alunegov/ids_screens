@@ -11,13 +11,13 @@ from ._pywinauto.patcher import patch as pywinauto_patch
 def main():
     pywinauto_patch()
 
+    with open("ids_screens.yaml", encoding="UTF-8") as f:
+        conf = yaml.safe_load(f)
+
     start_mouse_pos = win32api.GetCursorPos()
     # для белого фона на скриншотах в Win7
     bg = Application(backend="win32").start("notepad.exe")
     bg.Notepad.maximize()
-
-    with open("ids_screens.yaml", encoding="UTF-8") as f:
-        conf = yaml.safe_load(f)
 
     shoot_ids(conf["ids"])
     shoot_rr_viewer(conf["rr_viewer"])
