@@ -445,7 +445,7 @@ class RB(ExpertSystem):
     def Zamer_Cascade(self):
         self.select_popupmenu_item(self.rb_tree_path, "#15")  # Просмотр каскада
         time.sleep(self.delay_win_active)
-        self.app.TShowCascadeInitForm.capture_as_image().save("Zamer_Cascade_SelectFiles{}.bmp".format(self.suffix))
+        self.app.TShowCascadeInitForm.capture_as_image().save("_Zamer_Cascade_SelectFiles{}.bmp".format(self.suffix))
         # TODO: выбрать замеры
         self.app.TShowCascadeInitForm.Button2.click()  # Просмотр
         if self.app.TMessageForm.exists():
@@ -480,8 +480,7 @@ class RB(ExpertSystem):
         self.ids.TreeView.get_item(self.rbmsr_tree_path).click_input(button="right")
         # Подшипники качения->Фактический зазор
         if self.app.PopupMenu.menu().item_count() > 21:
-            self.app.PopupMenu.wrapper_object().highlight_and_capture("#21->#2", "EDIT_SF_RB_Call.bmp",
-                                                                      self.screen_rect)
+            self.app.PopupMenu.wrapper_object().highlight_and_capture("#21->#2", "_SF_RB_Call.bmp", self.screen_rect)
             SendKeys("{ESC}{ESC}")  # закрываем меню
         else:
             print("skip SF_RB_Call.bmp")
