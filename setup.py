@@ -16,7 +16,7 @@ setup(
         PROJECT_NAME + '.apps',
     ],
     install_requires=[
-        "PyYAML~=3.12",    
+        "PyYAML>=4.1",
         "pywinauto~=0.6.4",
     ],
     entry_points={
